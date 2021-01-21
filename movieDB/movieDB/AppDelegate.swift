@@ -10,20 +10,35 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    var mainRouter: MainRouter!
 
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(
+        _ application: UIApplication,
+        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        mainRouter = MainRouter()
         return true
     }
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        mainRouter.start()
+        return true
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {}
-
-
 }
 
+final class MainRouter {
+    private let window: UIWindow
+
+    init(window: UIWindow = UIWindow(frame: UIScreen.main.bounds)) {
+        self.window = window
+    }
+
+    func start() {
+        let viewModel = MoviesListViewModel()
+        let vc = MoviesListViewController(viewModel: viewModel)
+        viewModel.moviesListViewDelegate = vc
+        window.rootViewController = UINavigationController(rootViewController: vc)
+        window.makeKeyAndVisible()
+    }
+
+}
