@@ -3,6 +3,7 @@ import UIKit
 final class MoviesListViewController: UIViewController {
     private var collectionView: UICollectionView!
     private let viewModel: MoviesListViewModel
+    private var activityView = UIActivityIndicatorView()
 
     private let columnLayout = MoviesListFlowLayout(
         cellsPerRow: 1,
@@ -37,14 +38,21 @@ final class MoviesListViewController: UIViewController {
 
     private func setupUI() {
 
+        activityView.hidesWhenStopped = true
+        activityView.tintColor = .white
+
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        activityView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
+        view.addSubview(activityView)
 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            activityView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            activityView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 }
@@ -53,12 +61,14 @@ extension MoviesListViewController: MoviesListViewDelegate {
     func update(with viewState: MoviesListViewState) {
         switch viewState {
         case .loading:
-            // show spinner
+            activityView.startAnimating()
             break
         case .content:
+            activityView.stopAnimating()
             collectionView.reloadData()
             break
         case .error:
+            activityView.stopAnimating()
             break
         }
     }
