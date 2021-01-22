@@ -26,19 +26,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-final class MainRouter {
-    private let window: UIWindow
 
-    init(window: UIWindow = UIWindow(frame: UIScreen.main.bounds)) {
-        self.window = window
-    }
 
-    func start() {
-        let viewModel = MoviesListViewModel()
-        let vc = MoviesListViewController(viewModel: viewModel)
-        viewModel.moviesListViewDelegate = vc
-        window.rootViewController = UINavigationController(rootViewController: vc)
-        window.makeKeyAndVisible()
-    }
-
-}

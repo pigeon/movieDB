@@ -22,6 +22,7 @@ final class MoviesListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = NSLocalizedString("Popular movies", comment: "")
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: columnLayout)
         collectionView.register(cellType: MovieCell.self)
         collectionView.dataSource = self
@@ -83,12 +84,11 @@ extension MoviesListViewController: UICollectionViewDelegate {
         viewModel.loadDataIfNeeded(with: indexPath.item)
     }
 
-    //    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //        output.movieSelected(at: indexPath)
-    //        performSegue(withIdentifier: "FullScreenViewController", sender: self)
-    //    }
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        viewModel.selectItem(with: indexPath.item)
+    }
 }
-
+//TODO: Get rid of this 
 public extension UICollectionView {
     func register<T: UICollectionViewCell>(cellType: T.Type) {
         let className = String(describing: cellType.self)
@@ -107,10 +107,7 @@ public extension UICollectionView {
         with cellType: T.Type,
         for indexPath: IndexPath)
         -> T {
-
         let className = String(describing: cellType)
-
-        //swiftlint:disable:next force_cast
         return dequeueReusableCell(withReuseIdentifier: className, for: indexPath) as! T
     }
 }

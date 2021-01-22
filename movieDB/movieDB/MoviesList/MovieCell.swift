@@ -14,7 +14,7 @@ class MovieCell: UICollectionViewCell {
 
     func configure(_ movie: Movie) {
         image.kf.indicatorType = .activity
-        image.kf.setImage(with: URL(string: movie.imageURL)!)
+        image.kf.setImage(with: URL(string: movie.imageURL))
         movieTitle.text = movie.movieTitle
         moviesDescription.text = movie.movieDescription
         releaseDate.text = movie.releaseDate

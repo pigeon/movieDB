@@ -10,6 +10,7 @@ enum MoviesListViewState {
 
 final class MoviesListViewModel {
     let moviesRepository: MoviesRepository
+    let router: Router
     weak var moviesListViewDelegate: MoviesListViewDelegate?
     private var movies = [Movie]()
 
@@ -17,7 +18,8 @@ final class MoviesListViewModel {
         return movies.count
     }
 
-    init(moviesRepository: MoviesRepository = MoviesRepositoryImpl()) {
+    init(router: Router, moviesRepository: MoviesRepository = MoviesRepositoryImpl()) {
+        self.router = router
         self.moviesRepository = moviesRepository
     }
 
@@ -40,15 +42,19 @@ final class MoviesListViewModel {
         loadData()
     }
 
+    func getMovie(with index: Int) -> Movie {
+        return movies[index]
+    }
+
+    func selectItem(with index: Int) {
+        router.navigateToDetailsList(movies[index])
+    }
+
     private func handleContent(movies: [Movie]) {
         self.movies = movies
         moviesListViewDelegate?.update(with: .content)
     }
     private func handleError(error: Error) {
         moviesListViewDelegate?.update(with: .error)
-    }
-
-    func getMovie(with index: Int) -> Movie {
-        return movies[index]
     }
 }
