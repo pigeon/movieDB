@@ -25,6 +25,7 @@ final class MoviesListViewController: UIViewController {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: columnLayout)
         collectionView.register(cellType: MovieCell.self)
         collectionView.dataSource = self
+        collectionView.delegate = self
         setupUI()
     }
 
@@ -62,7 +63,7 @@ extension MoviesListViewController: MoviesListViewDelegate {
     }
 }
 
-extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension MoviesListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return viewModel.numberOfItemsInSection
     }
@@ -72,13 +73,21 @@ extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDa
         cell.configure(viewModel.getMovie(with: indexPath.item))
         return cell
     }
-
-//    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        output.movieSelected(at: indexPath)
-//        performSegue(withIdentifier: "FullScreenViewController", sender: self)
-//    }
 }
 
+extension MoviesListViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath) {
+        viewModel.loadDataIfNeeded(with: indexPath.item)
+    }
+
+    //    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //        output.movieSelected(at: indexPath)
+    //        performSegue(withIdentifier: "FullScreenViewController", sender: self)
+    //    }
+}
 
 public extension UICollectionView {
     func register<T: UICollectionViewCell>(cellType: T.Type) {

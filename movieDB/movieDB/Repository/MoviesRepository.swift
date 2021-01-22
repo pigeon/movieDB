@@ -35,6 +35,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
     private let moviesService: MoviesService
     private var numberOfPages = 0
     private var currentPage = 0
+    private var movies: [Movie] = []
 
     init(moviesService: MoviesService = MoviesServiceImpl()) {
         self.moviesService = moviesService
@@ -50,15 +51,16 @@ final class MoviesRepositoryImpl: MoviesRepository {
 
     func movies(completion: @escaping MoviesPageCompletion) {
         moviesService.movies(with: currentPage + 1) { [weak self] result in
+            guard let self = self else {return}
             switch result {
 
             case .success(let movies):
-                self?.currentPage = movies.page!
-                self?.numberOfPages = movies.totalPages!
+                self.currentPage = movies.page ?? self.currentPage
+                self.numberOfPages = movies.totalPages ?? self.numberOfPages
                 let movies = movies
                     .movies?
                     .map {
-                        Movie(url: self?.movieImageURL(id: $0.poster_path),
+                        Movie(url: self.movieImageURL(id: $0.poster_path),
                               title: $0.title,
                               overview: $0.overview,
                               vote: $0.voteAverage,
@@ -66,7 +68,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
                     }
                     .compactMap { $0 }
                 DispatchQueue.main.async {
-                    completion(.success(movies ?? []))
+                    completion(.success(self.handleUpdate(movies: movies)))
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
@@ -74,5 +76,18 @@ final class MoviesRepositoryImpl: MoviesRepository {
                 }
             }
         }
+    }
+
+    private func handleUpdate(movies: [Movie]?) -> [Movie] {
+        guard let movies = movies else {
+            return self.movies
+        }
+        
+        if self.movies.isEmpty {
+            self.movies = movies
+        } else {
+            self.movies.append(contentsOf: movies)
+        }
+        return self.movies
     }
 }

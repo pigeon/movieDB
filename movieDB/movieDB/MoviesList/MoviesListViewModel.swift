@@ -33,6 +33,13 @@ final class MoviesListViewModel {
         }
     }
 
+    func loadDataIfNeeded(with index: Int) {
+        guard index < movies.count && movies.count - index < 2 else {
+            return
+        }
+        loadData()
+    }
+
     private func handleContent(movies: [Movie]) {
         self.movies = movies
         moviesListViewDelegate?.update(with: .content)
