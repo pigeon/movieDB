@@ -12,6 +12,8 @@ class MovieDetailsViewController: UIViewController {
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var overviewLabel: UILabel!
     @IBOutlet private weak var overviewTextView: UITextView!
+    @IBOutlet private weak var releaseDate: UILabel!
+    @IBOutlet private weak var vote: UILabel!
 
     init(viewModel: MovieDetailsViewModel) {
         self.viewModel = viewModel
@@ -32,6 +34,8 @@ class MovieDetailsViewController: UIViewController {
 extension MovieDetailsViewController: MovieDetailsViewDelegate {
     func update(with viewState: MovieDetailsViewState) {
         title = viewState.title
+        releaseDate.text = viewState.releaseDate
+        vote.text = viewState.rating
         imageView.kf.setImage(with: URL(string: viewState.imageURL))
         overviewTextView.text = viewState.overview
     }
