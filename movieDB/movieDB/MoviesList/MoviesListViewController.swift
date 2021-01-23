@@ -39,7 +39,7 @@ final class MoviesListViewController: UIViewController {
     private func setupUI() {
 
         activityView.hidesWhenStopped = true
-        activityView.tintColor = .white
+        activityView.color = .white
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         activityView.translatesAutoresizingMaskIntoConstraints = false
