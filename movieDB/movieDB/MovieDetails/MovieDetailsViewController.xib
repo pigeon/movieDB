@@ -10,6 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MovieDetailsViewController" customModule="movieDB" customModuleProvider="target">
             <connections>
+                <outlet property="budget" destination="MIy-0f-woB" id="Bdg-zT-gwM"/>
                 <outlet property="imageView" destination="mZj-Ki-DaE" id="s0d-4H-qaA"/>
                 <outlet property="overviewLabel" destination="bIs-ND-0oL" id="mUT-gz-2Uc"/>
                 <outlet property="overviewTextView" destination="cDr-ea-xqW" id="yxg-59-rad"/>
@@ -46,14 +47,26 @@
                                 </label>
                             </subviews>
                         </stackView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MIy-0f-woB">
+                            <rect key="frame" x="181.5" y="44.5" width="224.5" height="21"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="21" id="awf-gJ-uwv"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="thin" pointSize="14"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstItem="kQL-r9-zAR" firstAttribute="leading" secondItem="mZj-Ki-DaE" secondAttribute="trailing" constant="8" id="1rG-1k-b43"/>
                         <constraint firstItem="mZj-Ki-DaE" firstAttribute="top" secondItem="vhl-Bl-eXj" secondAttribute="top" constant="8" id="8Ty-t6-3wx"/>
+                        <constraint firstItem="MIy-0f-woB" firstAttribute="top" secondItem="kQL-r9-zAR" secondAttribute="bottom" constant="16" id="I7g-8V-hYZ"/>
                         <constraint firstItem="kQL-r9-zAR" firstAttribute="top" secondItem="mZj-Ki-DaE" secondAttribute="top" id="LFW-MG-tPA"/>
                         <constraint firstAttribute="trailing" secondItem="kQL-r9-zAR" secondAttribute="trailing" constant="8" id="OPv-oU-X1Z"/>
+                        <constraint firstItem="MIy-0f-woB" firstAttribute="trailing" secondItem="kQL-r9-zAR" secondAttribute="trailing" id="PRT-b4-8SS"/>
                         <constraint firstItem="mZj-Ki-DaE" firstAttribute="width" secondItem="vhl-Bl-eXj" secondAttribute="width" multiplier="0.4" id="Uct-D4-pE1"/>
+                        <constraint firstItem="MIy-0f-woB" firstAttribute="leading" secondItem="kQL-r9-zAR" secondAttribute="leading" id="YZn-MJ-NaJ"/>
                         <constraint firstAttribute="bottom" secondItem="mZj-Ki-DaE" secondAttribute="bottom" constant="8" id="ofe-Ln-yCu"/>
                         <constraint firstItem="mZj-Ki-DaE" firstAttribute="leading" secondItem="vhl-Bl-eXj" secondAttribute="leading" constant="8" id="qkR-5z-QrI"/>
                         <constraint firstItem="kQL-r9-zAR" firstAttribute="top" secondItem="vhl-Bl-eXj" secondAttribute="top" constant="8" id="zV3-wU-SUX"/>

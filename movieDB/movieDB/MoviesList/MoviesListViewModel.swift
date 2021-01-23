@@ -18,7 +18,7 @@ final class MoviesListViewModel {
         return movies.count
     }
 
-    init(router: Router, moviesRepository: MoviesRepository = MoviesRepositoryImpl()) {
+    init(router: Router, moviesRepository: MoviesRepository) {
         self.router = router
         self.moviesRepository = moviesRepository
     }
