@@ -18,7 +18,7 @@ class MoviesRepositoryTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testSuccessWithEmptyResponse() throws {
+    func testMoviesListSuccessWithEmptyResponse() throws {
         let expectation = XCTestExpectation()
         let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
             completion(.success(MoviesDTO.stub()))
@@ -34,7 +34,7 @@ class MoviesRepositoryTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testSuccessWithNonEmptyResponse() throws {
+    func testMoviesListSuccessWithNonEmptyResponse() throws {
         let expectation = XCTestExpectation()
         let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
             completion(.success( MoviesDTO.stub(movies: [MovieDTO.stub()])) )
@@ -50,7 +50,7 @@ class MoviesRepositoryTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testFailureResponse() throws {
+    func testMoviesListFailureResponse() throws {
         let expectation = XCTestExpectation()
         let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
             completion(.failure(.badURL))
@@ -58,9 +58,41 @@ class MoviesRepositoryTests: XCTestCase {
         moviesServive.moviesWithCompletionClosure = completion
         moviesRepository.movies { (result) in
             guard case .failure(let error) = result else {
-                return XCTFail("Expected to be a success but got a success with \(result)")
+                return XCTFail("Expected to be a failure but got a success with \(result)")
             }
             XCTAssertEqual(error, MoviesServiceError.badURL)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testMovieDetailsFailureResponse() throws {
+        let expectation = XCTestExpectation()
+        let completion: (String, @escaping MovieDetailsCompletion) -> Void = { id, completion in
+            completion(.failure(.httpError))
+        }
+        moviesServive.movieDetailsWithCompletionClosure = completion
+        moviesRepository.movieDetails(with: "") { (result) in
+            guard case .failure(let error) = result else {
+                return XCTFail("Expected to be a failure but got a success with \(result)")
+            }
+            XCTAssertEqual(error, MoviesServiceError.httpError)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testMovieDetailsSuccessWithNonEmptyResponse() throws {
+        let expectation = XCTestExpectation()
+        let completion: (String, @escaping MovieDetailsCompletion) -> Void = { id, completion in
+            completion(.success(MovieDetailsDTO.stub()))
+        }
+        moviesServive.movieDetailsWithCompletionClosure = completion
+        moviesRepository.movieDetails(with: "") { (result) in
+            guard case .success(let value) = result else {
+                return XCTFail("Expected to be a success but got a failure with \(result)")
+            }
+            XCTAssertEqual(value, MovieDetails.stub())
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
