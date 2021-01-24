@@ -59,3 +59,4 @@ Service, Repository and ViewModel layers are covered with unit tests. Standard `
 - Acceptance testing is missing
 - Details view is static and would either need to be wrapped into scroll view or table/collection view to present more information
 - Offline storage can be added to improve UX and acceptance testing
+- There is [GET /configuration](https://developers.themoviedb.org/3/configuration/get-api-configuration) that should be used for images base URLs
