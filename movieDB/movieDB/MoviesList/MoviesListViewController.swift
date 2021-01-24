@@ -76,7 +76,9 @@ extension MoviesListViewController: UICollectionViewDataSource {
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MovieCell.self), for: indexPath) as? MovieCell else {
+        guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: String(describing: MovieCell.self),
+                for: indexPath) as? MovieCell else {
             fatalError("can't dequeue expected cell type")
         }
         cell.configure(viewModel.getMovie(with: indexPath.item))

@@ -14,6 +14,5 @@ class MovieCell: UICollectionViewCell {
         movieTitle.text = movie.movieTitle
         moviesDescription.text = movie.movieDescription
         releaseDate.text = movie.releaseDate
-        //rating.attributedText = movie.rating
     }
 }
