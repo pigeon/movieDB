@@ -8,10 +8,6 @@ class MovieCell: UICollectionViewCell {
     @IBOutlet private var releaseDate: UILabel!
     @IBOutlet private var rating: UILabel!
 
-//    override func awakeFromNib() {
-//        super.awakeFromNib()
-//    }
-
     func configure(_ movie: Movie) {
         image.kf.indicatorType = .activity
         image.kf.setImage(with: URL(string: movie.imageURL))

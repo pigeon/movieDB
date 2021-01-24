@@ -1,10 +1,3 @@
-//
-//  MovieDetailsViewController.swift
-//  movieDB
-//
-//  Created by Dmytro Golub on 22/01/2021.
-//
-
 import UIKit
 
 class MovieDetailsViewController: UIViewController {

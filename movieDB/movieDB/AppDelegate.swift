@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  movieDB
-//
-//  Created by Dmytro Golub on 21/01/2021.
-//
-
 import UIKit
 
 @main
