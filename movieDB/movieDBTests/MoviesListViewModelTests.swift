@@ -81,7 +81,7 @@ class MoviesListViewModelTests: XCTestCase {
         XCTAssertTrue(moviesListViewDelegate.updateWithCalled)
         wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(moviesListViewDelegate.updateWithCallsCount, 2)
-        XCTAssertEqual(moviesListViewDelegate.updateWithReceivedViewState, .error)
+        XCTAssertEqual(moviesListViewDelegate.updateWithReceivedViewState, .error("Request to MovieDB failed. Try again later"))
     }
 
     func testUserSelectedMovie() {
