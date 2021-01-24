@@ -1,3 +1,4 @@
+// sourcery: AutoMockable
 protocol MoviesListViewDelegate: class {
     func update(with viewState: MoviesListViewState)
 }

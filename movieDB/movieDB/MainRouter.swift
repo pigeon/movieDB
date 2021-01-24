@@ -1,5 +1,6 @@
 import UIKit
 
+// sourcery: AutoMockable
 protocol Router {
     func navigateToDetailsList(_ movie: Movie)
 }

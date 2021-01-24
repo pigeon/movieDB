@@ -11,18 +11,7 @@ import UIKit
 import AppKit
 #endif
 
-import movieDB
 @testable import movieDB
-
-
-
-
-
-
-
-
-
-
 
 class HTTPSessionMock: HTTPSession {
 
@@ -37,11 +26,34 @@ class HTTPSessionMock: HTTPSession {
     var dataTaskWithCompletionHandlerReturnValue: URLSessionDataTask!
     var dataTaskWithCompletionHandlerClosure: ((URL, @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask)?
 
-    func dataTask(with url: URL,                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         dataTaskWithCompletionHandlerCallsCount += 1
         dataTaskWithCompletionHandlerReceivedArguments = (url: url, completionHandler: completionHandler)
         dataTaskWithCompletionHandlerReceivedInvocations.append((url: url, completionHandler: completionHandler))
         return dataTaskWithCompletionHandlerClosure.map({ $0(url, completionHandler) }) ?? dataTaskWithCompletionHandlerReturnValue
+    }
+
+}
+class HTTPSessionDataTaskMock: HTTPSessionDataTask {
+
+}
+class MoviesListViewDelegateMock: MoviesListViewDelegate {
+
+    //MARK: - update
+
+    var updateWithCallsCount = 0
+    var updateWithCalled: Bool {
+        return updateWithCallsCount > 0
+    }
+    var updateWithReceivedViewState: MoviesListViewState?
+    var updateWithReceivedInvocations: [MoviesListViewState] = []
+    var updateWithClosure: ((MoviesListViewState) -> Void)?
+
+    func update(with viewState: MoviesListViewState) {
+        updateWithCallsCount += 1
+        updateWithReceivedViewState = viewState
+        updateWithReceivedInvocations.append(viewState)
+        updateWithClosure?(viewState)
     }
 
 }
@@ -116,6 +128,26 @@ class MoviesServiceMock: MoviesService {
         movieDetailsWithCompletionReceivedArguments = (movieId: movieId, completion: completion)
         movieDetailsWithCompletionReceivedInvocations.append((movieId: movieId, completion: completion))
         movieDetailsWithCompletionClosure?(movieId, completion)
+    }
+
+}
+class RouterMock: Router {
+
+    //MARK: - navigateToDetailsList
+
+    var navigateToDetailsListCallsCount = 0
+    var navigateToDetailsListCalled: Bool {
+        return navigateToDetailsListCallsCount > 0
+    }
+    var navigateToDetailsListReceivedMovie: Movie?
+    var navigateToDetailsListReceivedInvocations: [Movie] = []
+    var navigateToDetailsListClosure: ((Movie) -> Void)?
+
+    func navigateToDetailsList(_ movie: Movie) {
+        navigateToDetailsListCallsCount += 1
+        navigateToDetailsListReceivedMovie = movie
+        navigateToDetailsListReceivedInvocations.append(movie)
+        navigateToDetailsListClosure?(movie)
     }
 
 }
