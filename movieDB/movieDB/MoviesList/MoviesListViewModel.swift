@@ -1,3 +1,5 @@
+import Foundation
+
 // sourcery: AutoMockable
 protocol MoviesListViewDelegate: class {
     func update(with viewState: MoviesListViewState)
@@ -6,7 +8,7 @@ protocol MoviesListViewDelegate: class {
 enum MoviesListViewState {
     case loading
     case content
-    case error
+    case error(String)
 }
 
 final class MoviesListViewModel {
@@ -55,7 +57,19 @@ final class MoviesListViewModel {
         self.movies = movies
         moviesListViewDelegate?.update(with: .content)
     }
-    private func handleError(error: Error) {
-        moviesListViewDelegate?.update(with: .error)
+    private func handleError(error: MoviesServiceError) {
+        var errorMessage = "Something went wrong"
+        switch error {
+        case .badURL:
+            errorMessage = "Bad URL"
+        case .httpError:
+            errorMessage = "Request to MovieDB failed. Try again later"
+        case .apiError(let error):
+            let nsError = error as NSError
+            errorMessage = nsError.localizedDescription
+        default:
+            break
+        }
+        moviesListViewDelegate?.update(with: .error(errorMessage))
     }
 }
