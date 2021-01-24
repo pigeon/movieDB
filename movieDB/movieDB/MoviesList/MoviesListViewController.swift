@@ -25,7 +25,9 @@ final class MoviesListViewController: UIViewController {
         super.viewDidLoad()
         title = NSLocalizedString("Popular movies", comment: "")
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: columnLayout)
-        collectionView.register(cellType: MovieCell.self)
+        let cellName = String(describing: MovieCell.self)
+        collectionView.register(UINib(nibName: cellName, bundle: .main),
+                                forCellWithReuseIdentifier: cellName)
         collectionView.dataSource = self
         collectionView.delegate = self
         setupUI()
@@ -80,7 +82,9 @@ extension MoviesListViewController: UICollectionViewDataSource {
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueResuableCell(with: MovieCell.self, for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MovieCell.self), for: indexPath) as? MovieCell else {
+            fatalError("can't dequeue expected cell type")
+        }
         cell.configure(viewModel.getMovie(with: indexPath.item))
         return cell
     }
@@ -96,28 +100,5 @@ extension MoviesListViewController: UICollectionViewDelegate {
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         viewModel.selectItem(with: indexPath.item)
-    }
-}
-//TODO: Get rid of this 
-public extension UICollectionView {
-    func register<T: UICollectionViewCell>(cellType: T.Type) {
-        let className = String(describing: cellType.self)
-        let bundle = Bundle(for: T.self)
-        if bundle.path(forResource: className, ofType: "nib") != nil {
-            let optionalNib = UINib(nibName: className, bundle: bundle)
-            // Use UINib to register
-            register(optionalNib, forCellWithReuseIdentifier: className)
-            return
-        }
-        // Use Classname to register as `xib` is not present.
-        register(T.self, forCellWithReuseIdentifier: className)
-    }
-
-    func dequeueResuableCell<T: UICollectionViewCell>(
-        with cellType: T.Type,
-        for indexPath: IndexPath)
-        -> T {
-        let className = String(describing: cellType)
-        return dequeueReusableCell(withReuseIdentifier: className, for: indexPath) as! T
     }
 }
