@@ -15,11 +15,12 @@ protocol MoviesService {
 }
 
 class MoviesServiceImpl: MoviesService {
-    private let session = URLSession(configuration: URLSessionConfiguration.default)
+    private let session: HTTPSession
     private let apiKey: String
 
-    init(key: String = "e5a7a90ede668398505588b032cae4c9") {
-        apiKey = key
+    init(apiKey: String = "e5a7a90ede668398505588b032cae4c9", session: HTTPSession = URLSession(configuration: URLSessionConfiguration.default)) {
+        self.apiKey = apiKey
+        self.session = session
     }
 
     func movies(with page: Int, completion: @escaping MoviesListCompletion) {
@@ -82,3 +83,5 @@ class MoviesServiceImpl: MoviesService {
         task.resume()
     }
 }
+
+extension URLSession: HTTPSession {}
