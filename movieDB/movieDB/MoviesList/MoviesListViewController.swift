@@ -59,16 +59,13 @@ extension MoviesListViewController: MoviesListViewDelegate {
         switch viewState {
         case .loading:
             activityView.startAnimating()
-            break
         case .content:
             activityView.stopAnimating()
             collectionView.reloadData()
-            break
         case .error(let message):
             activityView.stopAnimating()
             showError(title: NSLocalizedString("Error", comment: ""),
                       message: NSLocalizedString(message, comment: ""))
-            break
         }
     }
 }

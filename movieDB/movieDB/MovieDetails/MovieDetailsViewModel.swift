@@ -50,7 +50,7 @@ class MovieDetailsViewModel {
             switch result {
             case .success(let movieDetails):
                 self?.handleMoviesDetails(movieDetails)
-            case .failure(_):
+            case .failure:
                 // we silent error here because we have initial data to populate the screen
                 break
             }

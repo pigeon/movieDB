@@ -17,17 +17,17 @@ final class MainRouter: Router {
 
     func start() {
         let viewModel = MoviesListViewModel(router: self, moviesRepository: moviesRepository)
-        let vc = MoviesListViewController(viewModel: viewModel)
-        viewModel.moviesListViewDelegate = vc
-        navigationController = UINavigationController(rootViewController: vc)
+        let viewController = MoviesListViewController(viewModel: viewModel)
+        viewModel.moviesListViewDelegate = viewController
+        navigationController = UINavigationController(rootViewController: viewController)
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
     }
 
     func navigateToDetailsList(_ movie: Movie) {
         let viewModel = MovieDetailsViewModel(movie: movie, moviesRepository: moviesRepository)
-        let vc = MovieDetailsViewController(viewModel: viewModel)
-        viewModel.movieDetailsViewDelegate = vc
-        navigationController?.pushViewController(vc, animated: true)
+        let viewController = MovieDetailsViewController(viewModel: viewModel)
+        viewModel.movieDetailsViewDelegate = viewController
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
