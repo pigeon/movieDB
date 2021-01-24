@@ -1,4 +1,4 @@
-struct Movie {
+struct Movie: Equatable {
     let imageURL: String
     let movieTitle: String
     let movieDescription: String

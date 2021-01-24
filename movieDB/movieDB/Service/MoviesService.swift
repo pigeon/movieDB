@@ -9,6 +9,8 @@ enum MoviesServiceError: Error {
     case httpError
     case apiError(Error)
 }
+
+// sourcery: AutoMockable
 protocol MoviesService {
     func movies(with page: Int, completion: @escaping MoviesListCompletion)
     func movieDetails(with movieId: String, completion: @escaping MovieDetailsCompletion)

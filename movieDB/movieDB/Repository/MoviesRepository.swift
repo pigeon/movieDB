@@ -3,6 +3,7 @@ import Foundation
 typealias MoviesPageCompletion = (Result<[Movie], MoviesServiceError>) -> Void
 typealias DetailsCompletion = (Result<MovieDetails, MoviesServiceError>) -> Void
 
+// sourcery: AutoMockable
 protocol MoviesRepository {
     func movies(completion: @escaping MoviesPageCompletion)
     func movieDetails(with movieId: String, completion: @escaping DetailsCompletion)
