@@ -1,4 +1,4 @@
-struct MovieDTO: Codable {
+struct MovieDTO: Codable, Equatable {
     let vote_count: Int?
     let id: Int?
     let video: Bool?

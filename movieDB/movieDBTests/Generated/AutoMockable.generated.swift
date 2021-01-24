@@ -13,30 +13,6 @@ import AppKit
 
 @testable import movieDB
 
-class HTTPSessionMock: HTTPSession {
-
-    //MARK: - dataTask
-
-    var dataTaskWithCompletionHandlerCallsCount = 0
-    var dataTaskWithCompletionHandlerCalled: Bool {
-        return dataTaskWithCompletionHandlerCallsCount > 0
-    }
-    var dataTaskWithCompletionHandlerReceivedArguments: (url: URL, completionHandler: (Data?, URLResponse?, Error?) -> Void)?
-    var dataTaskWithCompletionHandlerReceivedInvocations: [(url: URL, completionHandler: (Data?, URLResponse?, Error?) -> Void)] = []
-    var dataTaskWithCompletionHandlerReturnValue: URLSessionDataTask!
-    var dataTaskWithCompletionHandlerClosure: ((URL, @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask)?
-
-    func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        dataTaskWithCompletionHandlerCallsCount += 1
-        dataTaskWithCompletionHandlerReceivedArguments = (url: url, completionHandler: completionHandler)
-        dataTaskWithCompletionHandlerReceivedInvocations.append((url: url, completionHandler: completionHandler))
-        return dataTaskWithCompletionHandlerClosure.map({ $0(url, completionHandler) }) ?? dataTaskWithCompletionHandlerReturnValue
-    }
-
-}
-class HTTPSessionDataTaskMock: HTTPSessionDataTask {
-
-}
 class MoviesListViewDelegateMock: MoviesListViewDelegate {
 
     //MARK: - update

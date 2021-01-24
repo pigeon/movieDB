@@ -1,6 +1,6 @@
 import Foundation
 
-struct MoviesDTO: Codable {
+struct MoviesDTO: Codable, Equatable {
     let page: Int?
     let totalResults: Int?
     let totalPages: Int?

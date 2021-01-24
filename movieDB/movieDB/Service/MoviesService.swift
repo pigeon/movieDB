@@ -10,6 +10,22 @@ enum MoviesServiceError: Error {
     case apiError(Error)
 }
 
+protocol HTTPNetworkSession {
+    func loadData(from url: URL,
+                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+}
+
+extension URLSession: HTTPNetworkSession {
+    func loadData(from url: URL,
+                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        let task = dataTask(with: url) { (data, response, error) in
+            completionHandler(data, response, error)
+        }
+
+        task.resume()
+    }
+}
+
 // sourcery: AutoMockable
 protocol MoviesService {
     func movies(with page: Int, completion: @escaping MoviesListCompletion)
@@ -17,10 +33,10 @@ protocol MoviesService {
 }
 
 class MoviesServiceImpl: MoviesService {
-    private let session: HTTPSession
+    private let session: HTTPNetworkSession
     private let apiKey: String
 
-    init(apiKey: String = "e5a7a90ede668398505588b032cae4c9", session: HTTPSession = URLSession(configuration: URLSessionConfiguration.default)) {
+    init(apiKey: String = "e5a7a90ede668398505588b032cae4c9", session: HTTPNetworkSession = URLSession(configuration: URLSessionConfiguration.default)) {
         self.apiKey = apiKey
         self.session = session
     }
@@ -32,7 +48,7 @@ class MoviesServiceImpl: MoviesService {
             return
         }
 
-        let task = session.dataTask(with: url) { data, urlResponse, error in
+        session.loadData(from: url) { data, urlResponse, error in
             if let error = error {
                 completion(.failure(.apiError(error)))
                 return
@@ -51,8 +67,6 @@ class MoviesServiceImpl: MoviesService {
                 }
             completion(.success(responseModel))
         }
-
-        task.resume()
     }
 
     func movieDetails(with movieId: String, completion: @escaping MovieDetailsCompletion) {
@@ -62,7 +76,7 @@ class MoviesServiceImpl: MoviesService {
             return
         }
 
-        let task = session.dataTask(with: url) { data, urlResponse, error in
+        session.loadData(from: url) { data, urlResponse, error in
             if let error = error {
                 completion(.failure(.apiError(error)))
                 return
@@ -81,9 +95,5 @@ class MoviesServiceImpl: MoviesService {
                 }
             completion(.success(responseModel))
         }
-
-        task.resume()
     }
 }
-
-extension URLSession: HTTPSession {}

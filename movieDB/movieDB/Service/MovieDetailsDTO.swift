@@ -1,4 +1,4 @@
-struct MovieDetailsDTO: Codable {
+struct MovieDetailsDTO: Codable, Equatable {
     let adult: Bool?
     let backdropPath: String?
     let budget: Int?
@@ -32,7 +32,7 @@ struct MovieDetailsDTO: Codable {
     }
 }
 
-struct Genre: Codable {
+struct Genre: Codable, Equatable {
     let id: Int?
     let name: String?
 }
