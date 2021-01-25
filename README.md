@@ -60,3 +60,4 @@ Service, Repository and ViewModel layers are covered with unit tests. Standard `
 - Details view is static and would either need to be wrapped into scroll view or table/collection view to present more information
 - Offline storage can be added to improve UX and acceptance testing
 - There is [GET /configuration](https://developers.themoviedb.org/3/configuration/get-api-configuration) that should be used for images base URLs
+- The app would benefit from pull to refresh function to get the list of the latest popular movies
