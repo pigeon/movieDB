@@ -12,13 +12,15 @@ protocol MoviesRepository {
 
 final class MoviesRepositoryImpl: MoviesRepository {
     private let moviesService: MoviesService
+    private let connectionManager: ConnectionManager
     private var numberOfPages = 0
     private var currentPage = 0
     private var movies: [Movie] = []
     private let storage: Storage?
     
-    init(moviesService: MoviesService = MoviesServiceImpl()) {
+    init(moviesService: MoviesService = MoviesServiceImpl(), connectionManager: ConnectionManager = ConnectionManagerImpl()) {
         self.moviesService = moviesService
+        self.connectionManager = connectionManager
         var options = Options()
         options.folder = "Cache"
         storage = try? Storage(options: options)
@@ -33,26 +35,12 @@ final class MoviesRepositoryImpl: MoviesRepository {
     
     
     func movies(completion: @escaping MoviesPageCompletion) {
-
-        if true {
-            do {
-                guard let movies: [Movie] = try storage?.load(forKey: "movies_\(self.currentPage + 1)", as: [Movie].self) else {
-                    DispatchQueue.main.async {
-                        completion(.failure(MoviesServiceError.noData))
-                    }
-                    return
-                }
-                DispatchQueue.main.async {
-                    completion(.success(movies))
-                }
-            } catch let error {
-                DispatchQueue.main.async {
-                    completion(.failure(MoviesServiceError.apiError(error)))
-                }
-            }
+        
+        guard connectionManager.connected else {
+            getCachedMovies(completion: completion)
             return
         }
-
+        
         moviesService.movies(with: currentPage + 1) { [weak self] result in
             guard let self = self else {return}
             switch result {
@@ -88,20 +76,12 @@ final class MoviesRepositoryImpl: MoviesRepository {
     }
     
     func movieDetails(with movieId: String, completion: @escaping DetailsCompletion) {
-
-        if true {
-            do {
-                guard let details: MovieDetails = try storage?.load(forKey: "movieDetails_\(movieId)", as: MovieDetails.self) else {
-                    completion(.failure(MoviesServiceError.noData))
-                    return
-                }
-                completion(.success(details))
-            } catch let error {
-                completion(.failure(MoviesServiceError.apiError(error)))
-            }
+        
+        guard connectionManager.connected else {
+            getCachedMovieDetails(movieId, completion: completion)
             return
         }
-
+        
         moviesService.movieDetails(with: movieId) { result in
             switch result {
             
@@ -124,6 +104,42 @@ final class MoviesRepositoryImpl: MoviesRepository {
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
+            }
+        }
+    }
+
+    private func getCachedMovies(completion: @escaping MoviesPageCompletion) {
+        do {
+            guard let movies: [Movie] = try storage?.load(forKey: "movies_\(self.currentPage + 1)", as: [Movie].self) else {
+                DispatchQueue.main.async {
+                    completion(.failure(MoviesServiceError.noData))
+                }
+                return
+            }
+            DispatchQueue.main.async {
+                completion(.success(movies))
+            }
+        } catch {
+            DispatchQueue.main.async {
+                completion(.failure(MoviesServiceError.noData))
+            }
+        }
+    }
+
+    private func getCachedMovieDetails(_ movieId: String, completion: @escaping DetailsCompletion) {
+        do {
+            guard let details: MovieDetails = try storage?.load(forKey: "movieDetails_\(movieId)", as: MovieDetails.self) else {
+                DispatchQueue.main.async {
+                    completion(.failure(MoviesServiceError.noData))
+                }
+                return
+            }
+            DispatchQueue.main.async {
+                completion(.success(details))
+            }
+        } catch {
+            DispatchQueue.main.async {
+                completion(.failure(MoviesServiceError.noData))
             }
         }
     }

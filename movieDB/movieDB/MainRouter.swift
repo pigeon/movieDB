@@ -9,10 +9,11 @@ final class MainRouter: Router {
     private let window: UIWindow
     private var navigationController: UINavigationController?
     private let moviesRepository: MoviesRepository
-
+    private let connectionManager: ConnectionManager
     init(window: UIWindow = UIWindow(frame: UIScreen.main.bounds)) {
         self.window = window
-        self.moviesRepository = MoviesRepositoryImpl(moviesService: MoviesServiceImpl())
+        connectionManager = ConnectionManagerImpl()
+        moviesRepository = MoviesRepositoryImpl(moviesService: MoviesServiceImpl(), connectionManager: connectionManager)
     }
 
     func start() {
