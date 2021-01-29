@@ -1,4 +1,4 @@
-struct MovieDetails: Equatable {
+struct MovieDetails: Equatable, Codable {
     let adult: Bool
     let budget: Int
     let genres: [String]

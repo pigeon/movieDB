@@ -1,4 +1,5 @@
 import Foundation
+import EasyStash
 
 typealias MoviesPageCompletion = (Result<[Movie], MoviesServiceError>) -> Void
 typealias DetailsCompletion = (Result<MovieDetails, MoviesServiceError>) -> Void
@@ -14,9 +15,13 @@ final class MoviesRepositoryImpl: MoviesRepository {
     private var numberOfPages = 0
     private var currentPage = 0
     private var movies: [Movie] = []
+    private let storage: Storage?
     
     init(moviesService: MoviesService = MoviesServiceImpl()) {
         self.moviesService = moviesService
+        var options = Options()
+        options.folder = "Cache"
+        storage = try? Storage(options: options)
     }
     
     private func movieImageURL(id: String?) -> String? {
@@ -28,6 +33,26 @@ final class MoviesRepositoryImpl: MoviesRepository {
     
     
     func movies(completion: @escaping MoviesPageCompletion) {
+
+        if true {
+            do {
+                guard let movies: [Movie] = try storage?.load(forKey: "movies_\(self.currentPage + 1)", as: [Movie].self) else {
+                    DispatchQueue.main.async {
+                        completion(.failure(MoviesServiceError.noData))
+                    }
+                    return
+                }
+                DispatchQueue.main.async {
+                    completion(.success(movies))
+                }
+            } catch let error {
+                DispatchQueue.main.async {
+                    completion(.failure(MoviesServiceError.apiError(error)))
+                }
+            }
+            return
+        }
+
         moviesService.movies(with: currentPage + 1) { [weak self] result in
             guard let self = self else {return}
             switch result {
@@ -46,6 +71,11 @@ final class MoviesRepositoryImpl: MoviesRepository {
                               id: $0.id)
                     }
                     .compactMap { $0 }
+                do {
+                    try self.storage?.save(object: movies, forKey: "movies_\(self.currentPage)")
+                } catch let error {
+                    print(error)
+                }
                 DispatchQueue.main.async {
                     completion(.success(self.handleMoviesListUpdate(movies: movies)))
                 }
@@ -58,6 +88,20 @@ final class MoviesRepositoryImpl: MoviesRepository {
     }
     
     func movieDetails(with movieId: String, completion: @escaping DetailsCompletion) {
+
+        if true {
+            do {
+                guard let details: MovieDetails = try storage?.load(forKey: "movieDetails_\(movieId)", as: MovieDetails.self) else {
+                    completion(.failure(MoviesServiceError.noData))
+                    return
+                }
+                completion(.success(details))
+            } catch let error {
+                completion(.failure(MoviesServiceError.apiError(error)))
+            }
+            return
+        }
+
         moviesService.movieDetails(with: movieId) { result in
             switch result {
             
@@ -67,6 +111,11 @@ final class MoviesRepositoryImpl: MoviesRepository {
                         completion(.failure(MoviesServiceError.unknown))
                     }
                     return
+                }
+                do {
+                    try self.storage?.save(object: details, forKey: "movieDetails_\(movieId)")
+                } catch let error {
+                    print(error)
                 }
                 DispatchQueue.main.async {
                     completion(.success(details))
@@ -78,7 +127,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
             }
         }
     }
-    
+
     private func handleMoviesListUpdate(movies: [Movie]?) -> [Movie] {
         guard let movies = movies else {
             return self.movies

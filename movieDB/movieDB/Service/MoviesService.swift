@@ -7,6 +7,7 @@ enum MoviesServiceError: Error {
     case unknown
     case badURL
     case httpError
+    case noData
     case apiError(Error)
 }
 

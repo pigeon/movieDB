@@ -19,6 +19,8 @@
 		1A01BE6A25BDF83B00F8E23C /* ViewController+AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A01BE6925BDF83B00F8E23C /* ViewController+AlertView.swift */; };
 		1A01BE7025BE1E0000F8E23C /* MoviesListViewState+TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A01BE6F25BE1E0000F8E23C /* MoviesListViewState+TestUtils.swift */; };
 		1A01BE7425BE285E00F8E23C /* HTTPNetworkSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A01BE7325BE285E00F8E23C /* HTTPNetworkSessionMock.swift */; };
+		1A82CC0525C1F2DF008A525C /* EasyStash in Frameworks */ = {isa = PBXBuildFile; productRef = 1A82CC0425C1F2DF008A525C /* EasyStash */; };
+		1A82CC0925C3FFDB008A525C /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A82CC0825C3FFDB008A525C /* ConnectionManager.swift */; };
 		1AA8680125BA24A20066D4AE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA8680025BA24A20066D4AE /* AppDelegate.swift */; };
 		1AA8680525BA24A20066D4AE /* MoviesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA8680425BA24A20066D4AE /* MoviesListViewController.swift */; };
 		1AA8680A25BA24A40066D4AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AA8680925BA24A40066D4AE /* Assets.xcassets */; };
@@ -66,6 +68,7 @@
 		1A01BE6925BDF83B00F8E23C /* ViewController+AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+AlertView.swift"; sourceTree = "<group>"; };
 		1A01BE6F25BE1E0000F8E23C /* MoviesListViewState+TestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MoviesListViewState+TestUtils.swift"; sourceTree = "<group>"; };
 		1A01BE7325BE285E00F8E23C /* HTTPNetworkSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPNetworkSessionMock.swift; sourceTree = "<group>"; };
+		1A82CC0825C3FFDB008A525C /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		1AA867FD25BA24A20066D4AE /* movieDB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = movieDB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA8680025BA24A20066D4AE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1AA8680425BA24A20066D4AE /* MoviesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesListViewController.swift; sourceTree = "<group>"; };
@@ -98,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A82CC0525C1F2DF008A525C /* EasyStash in Frameworks */,
 				1AA8687225BA323D0066D4AE /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -139,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				1A01BE6925BDF83B00F8E23C /* ViewController+AlertView.swift */,
+				1A82CC0825C3FFDB008A525C /* ConnectionManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -253,6 +258,7 @@
 			name = movieDB;
 			packageProductDependencies = (
 				1AA8687125BA323D0066D4AE /* Kingfisher */,
+				1A82CC0425C1F2DF008A525C /* EasyStash */,
 			);
 			productName = movieDB;
 			productReference = 1AA867FD25BA24A20066D4AE /* movieDB.app */;
@@ -305,6 +311,7 @@
 			mainGroup = 1AA867F425BA24A20066D4AE;
 			packageReferences = (
 				1AA8687025BA323D0066D4AE /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				1A82CC0325C1F2DF008A525C /* XCRemoteSwiftPackageReference "EasyStash" */,
 			);
 			productRefGroup = 1AA867FE25BA24A20066D4AE /* Products */;
 			projectDirPath = "";
@@ -355,6 +362,7 @@
 				1AA8688A25BA3A760066D4AE /* MoviesRepository.swift in Sources */,
 				1AF4468325BB673A00AD00F0 /* MovieDetailsViewModel.swift in Sources */,
 				1A01BE6A25BDF83B00F8E23C /* ViewController+AlertView.swift in Sources */,
+				1A82CC0925C3FFDB008A525C /* ConnectionManager.swift in Sources */,
 				1AA8686E25BA31B80066D4AE /* MovieCell.swift in Sources */,
 				1AA8686B25BA317D0066D4AE /* MoviesListFlowLayout.swift in Sources */,
 				1AA8688625BA360D0066D4AE /* MoviesDTO.swift in Sources */,
@@ -630,6 +638,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1A82CC0325C1F2DF008A525C /* XCRemoteSwiftPackageReference "EasyStash" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onmyway133/EasyStash";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.8;
+			};
+		};
 		1AA8687025BA323D0066D4AE /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
@@ -641,6 +657,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1A82CC0425C1F2DF008A525C /* EasyStash */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A82CC0325C1F2DF008A525C /* XCRemoteSwiftPackageReference "EasyStash" */;
+			productName = EasyStash;
+		};
 		1AA8687125BA323D0066D4AE /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1AA8687025BA323D0066D4AE /* XCRemoteSwiftPackageReference "Kingfisher" */;
