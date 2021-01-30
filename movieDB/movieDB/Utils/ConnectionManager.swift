@@ -9,7 +9,7 @@ class ConnectionManagerImpl: ConnectionManager {
         return connectionStatus
     }
 
-    private var connectionStatus: Bool = false
+    private var connectionStatus: Bool = true
     private let monitor = NWPathMonitor()
 
     init() {

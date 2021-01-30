@@ -31,6 +31,10 @@ final class MoviesListViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         setupUI()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         viewModel.loadData()
     }
 

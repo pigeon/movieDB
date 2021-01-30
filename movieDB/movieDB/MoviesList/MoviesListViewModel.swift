@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 // sourcery: AutoMockable
 protocol MoviesListViewDelegate: class {
@@ -16,6 +17,7 @@ final class MoviesListViewModel {
     let router: Router
     weak var moviesListViewDelegate: MoviesListViewDelegate?
     private var movies = [Movie]()
+    private var dataLoading = false
 
     var numberOfItemsInSection: Int {
         return movies.count
@@ -24,11 +26,22 @@ final class MoviesListViewModel {
     init(router: Router, moviesRepository: MoviesRepository) {
         self.router = router
         self.moviesRepository = moviesRepository
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                               object: nil, queue: nil) { [weak self] notification in
+            self?.appDidBecomeActive()
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     func loadData() {
+        guard !dataLoading else { return }
+        dataLoading = true
         moviesListViewDelegate?.update(with: .loading)
         moviesRepository.movies { [weak self] result in
+            self?.dataLoading = false
             switch result {
             case .success(let movies):
                 self?.handleContent(movies: movies)
@@ -51,6 +64,10 @@ final class MoviesListViewModel {
 
     func selectItem(with index: Int) {
         router.navigateToDetailsList(movies[index])
+    }
+
+    private func appDidBecomeActive() {
+        loadData()
     }
 
     private func handleContent(movies: [Movie]) {
