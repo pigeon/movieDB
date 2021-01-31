@@ -13,6 +13,14 @@ import AppKit
 
 @testable import movieDB
 
+class ConnectionManagerMock: ConnectionManager {
+    var connected: Bool {
+        get { return underlyingConnected }
+        set(value) { underlyingConnected = value }
+    }
+    var underlyingConnected: Bool!
+
+}
 class MoviesListViewDelegateMock: MoviesListViewDelegate {
 
     //MARK: - update
@@ -124,6 +132,44 @@ class RouterMock: Router {
         navigateToDetailsListReceivedMovie = movie
         navigateToDetailsListReceivedInvocations.append(movie)
         navigateToDetailsListClosure?(movie)
+    }
+
+}
+class SystemNotificationMock: SystemNotification {
+
+    //MARK: - addObserver
+
+    var addObserverForNameObjectQueueUsingCallsCount = 0
+    var addObserverForNameObjectQueueUsingCalled: Bool {
+        return addObserverForNameObjectQueueUsingCallsCount > 0
+    }
+    var addObserverForNameObjectQueueUsingReceivedArguments: (name: NSNotification.Name?, obj: Any?, queue: OperationQueue?, block: (Notification) -> Void)?
+    var addObserverForNameObjectQueueUsingReceivedInvocations: [(name: NSNotification.Name?, obj: Any?, queue: OperationQueue?, block: (Notification) -> Void)] = []
+    var addObserverForNameObjectQueueUsingReturnValue: NSObjectProtocol!
+    var addObserverForNameObjectQueueUsingClosure: ((NSNotification.Name?, Any?, OperationQueue?, @escaping (Notification) -> Void) -> NSObjectProtocol)?
+
+    func addObserver(forName name: NSNotification.Name?, object obj: Any?, queue: OperationQueue?, using block: @escaping (Notification) -> Void) -> NSObjectProtocol {
+        addObserverForNameObjectQueueUsingCallsCount += 1
+        addObserverForNameObjectQueueUsingReceivedArguments = (name: name, obj: obj, queue: queue, block: block)
+        addObserverForNameObjectQueueUsingReceivedInvocations.append((name: name, obj: obj, queue: queue, block: block))
+        return addObserverForNameObjectQueueUsingClosure.map({ $0(name, obj, queue, block) }) ?? addObserverForNameObjectQueueUsingReturnValue
+    }
+
+    //MARK: - removeObserver
+
+    var removeObserverCallsCount = 0
+    var removeObserverCalled: Bool {
+        return removeObserverCallsCount > 0
+    }
+    var removeObserverReceivedObserver: Any?
+    var removeObserverReceivedInvocations: [Any] = []
+    var removeObserverClosure: ((Any) -> Void)?
+
+    func removeObserver(_ observer: Any) {
+        removeObserverCallsCount += 1
+        removeObserverReceivedObserver = observer
+        removeObserverReceivedInvocations.append(observer)
+        removeObserverClosure?(observer)
     }
 
 }

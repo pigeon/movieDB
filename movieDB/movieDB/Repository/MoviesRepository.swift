@@ -16,14 +16,14 @@ final class MoviesRepositoryImpl: MoviesRepository {
     private var numberOfPages = 0
     private var currentPage = 0
     private var movies: [Movie] = []
-    private let storage: Storage?
+    private let storage: Cache
     
-    init(moviesService: MoviesService = MoviesServiceImpl(), connectionManager: ConnectionManager = ConnectionManagerImpl()) {
+    init(
+        moviesService: MoviesService = MoviesServiceImpl(),
+        connectionManager: ConnectionManager = ConnectionManagerImpl(), cache: Cache = try! CacheImpl()) {
         self.moviesService = moviesService
         self.connectionManager = connectionManager
-        var options = Options()
-        options.folder = "Cache"
-        storage = try? Storage(options: options)
+        self.storage = cache
     }
     
     private func movieImageURL(id: String?) -> String? {
@@ -60,7 +60,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
                     }
                     .compactMap { $0 }
                 do {
-                    try self.storage?.save(object: movies, forKey: "movies_\(self.currentPage)")
+                    try self.storage.save(object: movies, forKey: "movies_\(self.currentPage)")
                 } catch let error {
                     print(error)
                 }
@@ -93,7 +93,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
                     return
                 }
                 do {
-                    try self.storage?.save(object: details, forKey: "movieDetails_\(movieId)")
+                    try self.storage.save(object: details, forKey: "movieDetails_\(movieId)")
                 } catch let error {
                     print(error)
                 }
@@ -110,7 +110,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
 
     private func getCachedMovies(completion: @escaping MoviesPageCompletion) {
         do {
-            guard let movies: [Movie] = try storage?.load(forKey: "movies_\(self.currentPage + 1)", as: [Movie].self) else {
+            guard let movies: [Movie] = try storage.load(forKey: "movies_\(self.currentPage + 1)", as: [Movie].self) else {
                 DispatchQueue.main.async {
                     completion(.failure(MoviesServiceError.noData))
                 }
@@ -128,7 +128,7 @@ final class MoviesRepositoryImpl: MoviesRepository {
 
     private func getCachedMovieDetails(_ movieId: String, completion: @escaping DetailsCompletion) {
         do {
-            guard let details: MovieDetails = try storage?.load(forKey: "movieDetails_\(movieId)", as: MovieDetails.self) else {
+            guard let details: MovieDetails = try storage.load(forKey: "movieDetails_\(movieId)", as: MovieDetails.self) else {
                 DispatchQueue.main.async {
                     completion(.failure(MoviesServiceError.noData))
                 }

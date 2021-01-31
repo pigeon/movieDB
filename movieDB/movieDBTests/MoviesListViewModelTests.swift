@@ -7,13 +7,23 @@ class MoviesListViewModelTests: XCTestCase {
     var moviesRepository: MoviesRepositoryMock!
     var moviesListViewDelegate: MoviesListViewDelegateMock!
     var router: RouterMock!
+    var notificationCenter: SystemNotificationMock!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         moviesRepository = MoviesRepositoryMock()
         router = RouterMock()
         moviesListViewDelegate = MoviesListViewDelegateMock()
-        moviesListViewModel = MoviesListViewModel(router: router, moviesRepository: moviesRepository)
+        notificationCenter = SystemNotificationMock()
+
+        notificationCenter.addObserverForNameObjectQueueUsingClosure = { name, object, queue, completion in
+            return NSObject()
+        }
+
+        moviesListViewModel = MoviesListViewModel(
+            router: router,
+            moviesRepository: moviesRepository,
+            notificationCenter: notificationCenter)
         moviesListViewModel.moviesListViewDelegate = moviesListViewDelegate
     }
 
@@ -108,5 +118,16 @@ class MoviesListViewModelTests: XCTestCase {
         moviesListViewModel.loadData()
         wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(moviesListViewModel.getMovie(with: 0),Movie.stub())
+    }
+
+    func testModelLoadsDataWhenAppEntersForeground() {
+        let expectation = XCTestExpectation()
+        let completion: (@escaping MoviesPageCompletion) -> Void = { completion in
+            completion(.success([Movie.stub()]))
+            expectation.fulfill()
+        }
+        moviesRepository.moviesCompletionClosure = completion
+        notificationCenter.addObserverForNameObjectQueueUsingReceivedInvocations[0].block(Notification(name: UIApplication.willEnterForegroundNotification))
+        XCTAssertTrue(moviesRepository.moviesCompletionCalled)
     }
 }

@@ -5,11 +5,18 @@ class MoviesRepositoryTests: XCTestCase {
 
     var moviesRepository: MoviesRepository!
     var moviesServive: MoviesServiceMock!
+    var cache: CacheMock!
+    var connectionManager: ConnectionManagerMock!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         moviesServive = MoviesServiceMock()
-        moviesRepository = MoviesRepositoryImpl(moviesService: moviesServive)
+        cache = CacheMock()
+        connectionManager = ConnectionManagerMock()
+        moviesRepository = MoviesRepositoryImpl(
+            moviesService: moviesServive,
+            connectionManager: connectionManager,
+            cache: cache)
     }
 
     override func tearDownWithError() throws {
@@ -23,6 +30,7 @@ class MoviesRepositoryTests: XCTestCase {
         let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
             completion(.success(MoviesDTO.stub()))
         }
+        connectionManager.underlyingConnected = true
         moviesServive.moviesWithCompletionClosure = completion
         moviesRepository.movies { (result) in
             guard case .success(let value) = result else {
@@ -39,12 +47,33 @@ class MoviesRepositoryTests: XCTestCase {
         let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
             completion(.success( MoviesDTO.stub(movies: [MovieDTO.stub()])) )
         }
+        connectionManager.underlyingConnected = true
         moviesServive.moviesWithCompletionClosure = completion
-        moviesRepository.movies { (result) in
+        moviesRepository.movies { [weak self] (result) in
             guard case .success(let value) = result else {
                 return XCTFail("Expected to be a success but got a failure with \(result)")
             }
             XCTAssertEqual(value,[Movie.stub()])
+            XCTAssertEqual(self?.cache.loadObjectWasCalled, false)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testMoviesListGetDataFromCacheIfOffline() throws {
+        let expectation = XCTestExpectation()
+        let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
+            completion(.success( MoviesDTO.stub(movies: [MovieDTO.stub()])) )
+        }
+        connectionManager.underlyingConnected = false
+        cache.saveReturnValue = [Movie.stub()]
+        moviesServive.moviesWithCompletionClosure = completion
+        moviesRepository.movies { [weak self] (result) in
+            guard case .success(let value) = result else {
+                return XCTFail("Expected to be a success but got a failure with \(result)")
+            }
+            XCTAssertEqual(value,[Movie.stub()])
+            XCTAssertEqual(self?.cache.loadObjectWasCalled, true)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
@@ -55,6 +84,7 @@ class MoviesRepositoryTests: XCTestCase {
         let completion :(Int, @escaping MoviesListCompletion) -> Void = { page, completion in
             completion(.failure(.badURL))
         }
+        connectionManager.underlyingConnected = true
         moviesServive.moviesWithCompletionClosure = completion
         moviesRepository.movies { (result) in
             guard case .failure(let error) = result else {
@@ -71,6 +101,7 @@ class MoviesRepositoryTests: XCTestCase {
         let completion: (String, @escaping MovieDetailsCompletion) -> Void = { id, completion in
             completion(.failure(.httpError))
         }
+        connectionManager.underlyingConnected = true
         moviesServive.movieDetailsWithCompletionClosure = completion
         moviesRepository.movieDetails(with: "") { (result) in
             guard case .failure(let error) = result else {
@@ -87,6 +118,7 @@ class MoviesRepositoryTests: XCTestCase {
         let completion: (String, @escaping MovieDetailsCompletion) -> Void = { id, completion in
             completion(.success(MovieDetailsDTO.stub()))
         }
+        connectionManager.underlyingConnected = true
         moviesServive.movieDetailsWithCompletionClosure = completion
         moviesRepository.movieDetails(with: "") { (result) in
             guard case .success(let value) = result else {

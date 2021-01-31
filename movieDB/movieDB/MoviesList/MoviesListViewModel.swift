@@ -15,6 +15,7 @@ enum MoviesListViewState {
 final class MoviesListViewModel {
     let moviesRepository: MoviesRepository
     let router: Router
+    let notificationCenter: SystemNotification
     weak var moviesListViewDelegate: MoviesListViewDelegate?
     private var movies = [Movie]()
     private var dataLoading = false
@@ -23,17 +24,20 @@ final class MoviesListViewModel {
         return movies.count
     }
 
-    init(router: Router, moviesRepository: MoviesRepository) {
+    init(router: Router,
+         moviesRepository: MoviesRepository,
+         notificationCenter: SystemNotification = NotificationCenter.default) {
         self.router = router
         self.moviesRepository = moviesRepository
-        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
+        self.notificationCenter = notificationCenter
+        _ = notificationCenter.addObserver(forName: UIApplication.willEnterForegroundNotification,
                                                object: nil, queue: nil) { [weak self] notification in
             self?.appDidBecomeActive()
         }
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        notificationCenter.removeObserver(self)
     }
 
     func loadData() {
@@ -81,6 +85,8 @@ final class MoviesListViewModel {
             errorMessage = "Bad URL"
         case .httpError:
             errorMessage = "Request to MovieDB failed. Try again later"
+        case .noData:
+            errorMessage = "We can't reach MovieDB right now!"
         case .apiError(let error):
             let nsError = error as NSError
             errorMessage = nsError.localizedDescription

@@ -1,5 +1,7 @@
 import Network
 import os
+
+// sourcery: AutoMockable
 protocol ConnectionManager {
     var connected: Bool { get }
 }
